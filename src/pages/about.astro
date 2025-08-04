@@ -1,24 +1,33 @@
 ---
+/*
+  本页面为“关于”页面，使用 Astro 框架编写。
+  主要功能：从内容系统（content collection）获取 about 页的 Markdown 内容，
+  并用自定义布局（MainGridLayout）和 Markdown 渲染组件（Markdown）进行展示。
+*/
 
-import { getEntry, render } from "astro:content";
-import Markdown from "@components/misc/Markdown.astro";
-import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { getEntry, render } from "astro:content"; // Astro 内容系统API：getEntry用于获取指定内容，render用于渲染为组件
+import Markdown from "@components/misc/Markdown.astro"; // 自定义 Markdown 渲染组件，支持样式和扩展
+import I18nKey from "../i18n/i18nKey"; // 国际化 key 枚举，统一管理所有页面的多语言 key
+import { i18n } from "../i18n/translation"; // 国际化函数，根据 key 获取当前语言的文本
+import MainGridLayout from "../layouts/MainGridLayout.astro"; // 主布局组件，统一页面结构和样式
 
-const aboutPost = await getEntry("spec", "about");
+const aboutPost = await getEntry("spec", "about"); // 从内容集合 "spec" 中获取 "about" 这篇文章（通常是 Markdown 文件）
 
 if (!aboutPost) {
+	// 如果没有找到 about 内容，抛出错误，防止页面渲染空白
 	throw new Error("About page content not found");
 }
 
-const { Content } = await render(aboutPost);
+const { Content } = await render(aboutPost); // 将获取到的 Markdown 内容渲染为 Astro 组件，Content 用于实际页面展示
 ---
-<MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
+<MainGridLayout
+    title={i18n(I18nKey.about)}           // 页面标题，支持多语言
+    description={i18n(I18nKey.about)}     // 页面描述，支持多语言
+>
     <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
         <div class="card-base z-10 px-9 py-6 relative w-full ">
             <Markdown class="mt-2">
-                <Content />
+                <Content /> {/* 渲染实际的 Markdown 内容，支持自定义样式 */}
             </Markdown>
         </div>
     </div>
